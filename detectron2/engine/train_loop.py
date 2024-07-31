@@ -512,10 +512,10 @@ class AMPTrainer(SimpleTrainer):
             self.optimizer.zero_grad()
 
         # NOTE: time(backward)
-        start_time0 = time.time()  # 시간 측정 종료
+        # start_time0 = time.time()  # 시간 측정 종료
         self.grad_scaler.scale(losses).backward()
-        end_time0 = time.time()  # 시간 측정 종료
-        self.cal_time("backward", start_time0, end_time0)
+        # end_time0 = time.time()  # 시간 측정 종료
+        # self.cal_time("backward", start_time0, end_time0)
 
         if self.log_grad_scaler:
             storage = get_event_storage()
