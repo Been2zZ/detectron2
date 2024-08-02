@@ -15,6 +15,8 @@ from detectron2.utils.logger import _log_api_usage
 
 __all__ = ["HookBase", "TrainerBase", "SimpleTrainer", "AMPTrainer"]
 
+import logging
+import time
 
 class HookBase:
     """
@@ -476,6 +478,14 @@ class AMPTrainer(SimpleTrainer):
         self.precision = precision
         self.log_grad_scaler = log_grad_scaler
 
+    # NOTE: time
+    def cal_time(self, title, start_time, end_time):
+        logger = logging.getLogger(__name__)
+        elapsed_time = end_time - start_time
+        logger.info(
+            str.format(f"Elapsed time for {title}: {elapsed_time} seconds")
+        )
+        
     def run_step(self):
         """
         Implement the AMP training logic.
@@ -501,7 +511,11 @@ class AMPTrainer(SimpleTrainer):
         if not self.zero_grad_before_forward:
             self.optimizer.zero_grad()
 
+        # NOTE: time(backward)
+        # start_time0 = time.time()  # 시간 측정 종료
         self.grad_scaler.scale(losses).backward()
+        # end_time0 = time.time()  # 시간 측정 종료
+        # self.cal_time("backward", start_time0, end_time0)
 
         if self.log_grad_scaler:
             storage = get_event_storage()
