@@ -147,6 +147,7 @@ class COCOPanopticEvaluator(DatasetEvaluator):
                         seen_categories.add(segment["category_id"])  # ✅ Seen category_id 추가
                         
             with contextlib.redirect_stdout(io.StringIO()):
+                # pq_compute() 내부 소스 변경 (Seen/Unseen 지표 추가 위함)
                 pq_res = pq_compute(
                     gt_json,
                     PathManager.get_local_path(predictions_json),
