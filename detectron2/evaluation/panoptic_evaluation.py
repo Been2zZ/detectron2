@@ -140,12 +140,19 @@ class COCOPanopticEvaluator(DatasetEvaluator):
 
             from panopticapi.evaluation import pq_compute
 
+            seen_categories = set()
+            for pred in self._predictions:
+                for segment in pred["segments_info"]:
+                    if segment["isSeen"]: 
+                        seen_categories.add(segment["category_id"])  # ✅ Seen category_id 추가
+                        
             with contextlib.redirect_stdout(io.StringIO()):
                 pq_res = pq_compute(
                     gt_json,
                     PathManager.get_local_path(predictions_json),
                     gt_folder=gt_folder,
                     pred_folder=pred_dir,
+                    seen_categories=seen_categories,
                 )
 
         res = {}
@@ -158,6 +165,12 @@ class COCOPanopticEvaluator(DatasetEvaluator):
         res["PQ_st"] = 100 * pq_res["Stuff"]["pq"]
         res["SQ_st"] = 100 * pq_res["Stuff"]["sq"]
         res["RQ_st"] = 100 * pq_res["Stuff"]["rq"]
+        res["PQ_seen"] = 100 * pq_res["Seen"]["pq"]
+        res["SQ_seen"] = 100 * pq_res["Seen"]["sq"]
+        res["RQ_seen"] = 100 * pq_res["Seen"]["rq"]
+        res["PQ_unseen"] = 100 * pq_res["Unseen"]["pq"]
+        res["SQ_unseen"] = 100 * pq_res["Unseen"]["sq"]
+        res["RQ_unseen"] = 100 * pq_res["Unseen"]["rq"]
 
         results = OrderedDict({"panoptic_seg": res})
         _print_panoptic_results(pq_res)
@@ -168,7 +181,7 @@ class COCOPanopticEvaluator(DatasetEvaluator):
 def _print_panoptic_results(pq_res):
     headers = ["", "PQ", "SQ", "RQ", "#categories"]
     data = []
-    for name in ["All", "Things", "Stuff"]:
+    for name in ["All", "Things", "Stuff", "Seen", "Unseen"]:
         row = [name] + [pq_res[name][k] * 100 for k in ["pq", "sq", "rq"]] + [pq_res[name]["n"]]
         data.append(row)
     table = tabulate(
