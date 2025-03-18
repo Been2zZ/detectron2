@@ -559,7 +559,7 @@ class DefaultTrainer(TrainerBase):
         It now calls :func:`detectron2.data.build_detection_test_loader`.
         Overwrite it if you'd like a different data loader.
         """
-        return build_detection_test_loader(cfg, dataset_name, batch_size=4, num_workers=8)
+        return build_detection_test_loader(cfg, dataset_name, batch_size=1, num_workers=12)
 
     @classmethod
     def build_evaluator(cls, cfg, dataset_name):
