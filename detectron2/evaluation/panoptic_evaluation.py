@@ -160,18 +160,28 @@ class COCOPanopticEvaluator(DatasetEvaluator):
         res["PQ"] = 100 * pq_res["All"]["pq"]
         res["SQ"] = 100 * pq_res["All"]["sq"]
         res["RQ"] = 100 * pq_res["All"]["rq"]
+        res["AP"] = pq_res["All"]["ap"]
+        res["AR"] = pq_res["All"]["ar"]
         res["PQ_th"] = 100 * pq_res["Things"]["pq"]
         res["SQ_th"] = 100 * pq_res["Things"]["sq"]
         res["RQ_th"] = 100 * pq_res["Things"]["rq"]
+        res["AP_th"] = pq_res["Things"]["ap"]
+        res["AR_th"] = pq_res["Things"]["ar"]
         res["PQ_st"] = 100 * pq_res["Stuff"]["pq"]
         res["SQ_st"] = 100 * pq_res["Stuff"]["sq"]
         res["RQ_st"] = 100 * pq_res["Stuff"]["rq"]
+        res["AP_st"] = pq_res["Stuff"]["ap"]
+        res["AR_st"] = pq_res["Stuff"]["ar"]
         res["PQ_seen"] = 100 * pq_res["Seen"]["pq"]
         res["SQ_seen"] = 100 * pq_res["Seen"]["sq"]
         res["RQ_seen"] = 100 * pq_res["Seen"]["rq"]
+        res["AP_seen"] = pq_res["Seen"]["ap"]
+        res["AR_seen"] = pq_res["Seen"]["ar"]
         res["PQ_unseen"] = 100 * pq_res["Unseen"]["pq"]
         res["SQ_unseen"] = 100 * pq_res["Unseen"]["sq"]
         res["RQ_unseen"] = 100 * pq_res["Unseen"]["rq"]
+        res["AP_unseen"] = pq_res["Unseen"]["ap"]
+        res["AR_unseen"] = pq_res["Unseen"]["ar"]
 
         results = OrderedDict({"panoptic_seg": res})
         _print_panoptic_results(pq_res)
@@ -180,10 +190,10 @@ class COCOPanopticEvaluator(DatasetEvaluator):
 
 
 def _print_panoptic_results(pq_res):
-    headers = ["", "PQ", "SQ", "RQ", "#categories"]
+    headers = ["", "PQ", "SQ", "RQ", "AP", "AR", "#categories"]
     data = []
     for name in ["All", "Things", "Stuff", "Seen", "Unseen"]:
-        row = [name] + [pq_res[name][k] * 100 for k in ["pq", "sq", "rq"]] + [pq_res[name]["n"]]
+        row = [name] + [pq_res[name][k] * 100 for k in ["pq", "sq", "rq", "ap", "ar"]] + [pq_res[name]["n"]]
         data.append(row)
     table = tabulate(
         data, headers=headers, tablefmt="pipe", floatfmt=".3f", stralign="center", numalign="center"
