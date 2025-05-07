@@ -193,7 +193,12 @@ def _print_panoptic_results(pq_res):
     headers = ["", "PQ", "SQ", "RQ", "AP", "AR", "#categories"]
     data = []
     for name in ["All", "Things", "Stuff", "Seen", "Unseen"]:
-        row = [name] + [pq_res[name][k] * 100 for k in ["pq", "sq", "rq", "ap", "ar"]] + [pq_res[name]["n"]]
+        row = (
+            [name]
+            + [pq_res[name][k] * 100 for k in ["pq", "sq", "rq"]]  # 백분율 표시
+            + [pq_res[name][k] for k in ["ap", "ar"]]              # 원래 값 유지
+            + [pq_res[name]["n"]]
+        )
         data.append(row)
     table = tabulate(
         data, headers=headers, tablefmt="pipe", floatfmt=".3f", stralign="center", numalign="center"
